@@ -1,0 +1,81 @@
+@font-face {
+    font-family: Genjiro;
+    src: url(fonts/Genjiro-JRymx.otf);
+}
+
+@font-face {
+    font-family: "Press Start";
+    src: url(fonts/prstart.ttf)
+}
+
+.paused {
+    filter: grayscale(.75);
+}
+
+.menu-logo {
+    color: #90e0ef;
+    font-family: "Genjiro";
+    font-size: 150px;
+    text-shadow: 10px 15px 0 black;
+}
+.menu-press-start {
+    color: white;
+    font-family: "Press Start";
+    font-size: 26px;
+    text-shadow: 5px 5px 0 black;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.health-bar-bg, .health-bar {
+    width: 100%;
+    height: 25px;
+}
+.health-bar-bg {
+    background-color: #0077b6;
+    border-top: 3px solid #ccc;
+    border-bottom: 3px solid #ccc;
+    position: absolute;
+}
+.health-bar {
+    background-color: #48cae4;
+    z-index: 1;
+}
+.health-bar-bg.first {
+    border-left: 3px solid #ccc;
+}
+.health-bar-bg.second {
+    border-right: 3px solid #ccc;
+}
+.timer-box {
+    background-color: #eee;
+    height: 45px;
+    width: 60px;
+    border: 3px solid #ccc;
+    font-family: "Press Start";
+}
+#winnerText, #winnerHelperText {
+    font-family: "Press Start";
+    width: 100%;
+    text-align: center;
+    font-size: 28px;
+    display: none;
+}
+#winnerHelperText {
+    margin-top: 15px;
+    font-size: 10px;
+}
+.finished {
+    display: block !important;
+}
+
+.blink {
+    animation: blinker 1.5s step-start infinite;
+}
+@keyframes blinker {
+    30% {
+        opacity: 0;
+    }
+}
