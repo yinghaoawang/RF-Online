@@ -1,5 +1,5 @@
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
-const url = 'http://localhost:3000';
+const url = 'http://localhost:1260';
 const socket = io(url);
 
 const p1Button = document.getElementById('joinP1Button');
