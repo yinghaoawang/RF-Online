@@ -113,9 +113,9 @@ class PlayingState extends State {
     updateInternalState() {
         if (this.player == null || this.player2 == null) return;
         if (this.player.combatModule.getIsDead() || this.player2.combatModule.getIsDead()) {
-            this.enterFinishedState();
+            // this.enterFinishedState();
         } else if (this.timeRemaining <= 0) {
-            this.enterFinishedState();
+            // this.enterFinishedState();
         }
 
     }

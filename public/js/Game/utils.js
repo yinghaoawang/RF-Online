@@ -13,7 +13,6 @@ function playerAttackCollision(p1, p2) {
         y: p2.position.y - p2Hurtbox.size.y / 2 + p2Hurtbox.offset.y,
         w: p2Hurtbox.size.x, h: p2Hurtbox.size.y
     };
-    console.log(rectA, rectB);
 
     return rectCollision(rectA, rectB);
 }
