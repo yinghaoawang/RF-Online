@@ -1,6 +1,9 @@
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 const url = 'http://localhost:1260';
-const socket = io(url);
+const options = {
+   transports: ['websocket'],
+}
+const socket = io(url, options);
 
 const p1Button = document.getElementById('joinP1Button');
 const p2Button = document.getElementById('joinP2Button');

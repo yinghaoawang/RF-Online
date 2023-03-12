@@ -1,7 +1,19 @@
 const express = require('express');
 const app = express();
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
+
+const fs = require('fs');
+const http = require('http');
+const https = require('https');
+
+const server = process.env.NODE_ENV == 'production' ? https.createServer({
+   key: fs.readFileSync(process.env.PATH_TO_PRIVATE_KEY),
+   cert: fs.readFileSync(process.env.PATH_TO_CERTIFICATE) 
+ }, app) : http.createServer(app);
+
+ const io = require('socket.io')(server, {
+   // secure: process.env.NODE_ENV == 'production' ? true : false,
+   transports: ['websocket'],
+ });
 
 const PlayerNumber = {
    ONE: 1,
@@ -91,6 +103,6 @@ io.on('connection', function(socket) {
 });
 
 const PORT = 1260;
-http.listen(PORT, function() {
-   console.log(`Listening on *:${ PORT }`);
+server.listen(PORT, () => {
+   console.log(`Listening on port ${ PORT }`);
 });
