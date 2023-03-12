@@ -150,18 +150,19 @@ class CombatModule extends PlayerModule {
 
     draw() {
         if (showHurtboxes) {
-            ctx.strokeStyle = 'red';
+            ctx.strokeStyle = 'green';
             ctx.strokeRect(this.player.position.x - (this.hurtbox.size.x / 2), this.player.position.y - (this.hurtbox.size.y / 2) + this.hurtbox.offset.y,
             this.hurtbox.size.x, this.hurtbox.size.y);
         }
 
         if (showHitboxes && this.getIsAttacking()) {
             ctx.save();
-            ctx.strokeStyle = 'limegreen';
+            ctx.strokeStyle = 'red';
             ctx.translate(this.player.position.x, this.player.position.y);
             ctx.scale(this.player.facingRight ? 1 : -1, 1);
 
             let currentHitbox = this.getActiveAttackHitbox();
+
             ctx.strokeRect(currentHitbox.offset.x, currentHitbox.offset.y,
                 currentHitbox.size.x, currentHitbox.size.y);
             ctx.restore();

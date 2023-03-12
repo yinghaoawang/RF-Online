@@ -3,7 +3,7 @@
         <link rel="stylesheet" href="./index.css" />
     </head>
     <body>
-        <div id="outerContainerDiv" style="position: relative; display: inline-block">
+        <div id="outerContainerDiv" style="position: relative; display: inline-block; margin-bottom: 10px">
             <div id="menuDiv" style="position: absolute; display: flex; width: 100%; height: 100%;">
                 <div style="position: absolute; display: flex; align-items: stretch;">
                     <div id="menuBackgroundFilter" style="position: absolute; background-color: rgba(0, 0, 0, .3);"></div>
@@ -27,7 +27,7 @@
                     </div>
                     
                     <div class="timer-box" style="flex-shrink: 0; display: flex; justify-content: center; align-items: center;">
-                        <span id="timer">60</span>
+                        <span id="timer">?</span>
                     </div>
                     <div style="width: 100%; margin-right: 20px; position: relative; display: flex; align-items: center;">
                         <div class="health-bar-bg second"></div>
@@ -40,6 +40,10 @@
                 </div>
             </div>
             <canvas id="canvas"></canvas>
+        </div>
+        <div id="playAsButtons">
+            <button id="joinP1Button">Join as Player 1</button>
+            <button id="joinP2Button">Join as Player 2</button>
         </div>
         <div id="checkboxes">
             <div><label><input id="gridCheckbox" type="checkbox" /> Show Grid</label></div>
@@ -59,7 +63,6 @@
         <script src="js/Game/Player/CombatModule.js"></script>
         <script src="js/Game/Player/Player.js"></script>
         <script src="js/Game/Game.js"></script>
-        <!-- <script src="js/Game/Socket.js"></script> -->
         <script src="js/index.js"></script>
         <script type="module" src="js/Game/Socket.js"></script>
     </body>

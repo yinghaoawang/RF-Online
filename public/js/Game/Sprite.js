@@ -38,6 +38,16 @@ class Sprite {
         this.currentSprite = this.sprites.idle;
     }
 
+    switchSpriteByUrl(spriteImageUrl) {
+        for (let key in this.sprites) {
+            const sprite = this.sprites[key];
+            if (sprite.imageUrl === spriteImageUrl) {
+                return this.switchSprite(key);
+            }
+        }
+        console.error('ImageUrl not found: ' + spriteImageUrl);
+    }
+
     switchSprite(spriteKey) {
         if (this.sprites == null || this.sprites[spriteKey] == null) {
             console.error("Sprite does not have key: " + spriteKey);

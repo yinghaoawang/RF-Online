@@ -5,13 +5,18 @@ let p2HealthBarElement = document.getElementById("playerTwoHealthBar");
 hideElementRecursive(playingDiv);
 
 let showAll = false;
-let showGrid = showAll, showHurtboxes = showAll, showHitboxes = showAll;
+let showGrid = false, showHurtboxes = false, showHitboxes = false;
 let checkboxesDiv = document.getElementById("checkboxes");
 hideElementRecursive(checkboxesDiv);
 
 let timerElement = document.getElementById("timer");
 let winnerTextElement = document.getElementById("winnerText");
 let winnerHelperTextElement = document.getElementById("winnerHelperText");
+
+const PlayerNumber = {
+    ONE: 1,
+    TWO: 2
+}
 
 const InternalPlayingState = {
     playing: 0,
@@ -26,20 +31,34 @@ class PlayingState extends State {
         this.background = new Sprite({sprites: './images/Background.png', position: {x: canvas.width / 2, y: canvas.height / 2}, targetSize: {x: canvas.width, y: canvas.height}});
         winnerTextElement.parentElement.style.marginTop = canvas.height / 2 - 40;
     }
+
+    createPlayer(playerNumber, setAsCurrentPlayer) {
+        switch (playerNumber) {
+            case PlayerNumber.ONE:
+                const player = new Player(this.game, structuredClone(ninjaData));
+                player.position.x = player.combatModule.hurtbox.size.x + 20;
+                player.position.y = 0;
+                player.facingRight = true;
+                this.updateHealthBarElement(p1HealthBarElement, player);
+                this.player = player;
+                if (setAsCurrentPlayer) {
+                    player.isCurrentPlayer = true;
+                    this.currentPlayer = player;
+                }
+                return player;
+            case PlayerNumber.TWO:
+                break;
+            default:
+                throw new Error('Unhandled player number in createPlayer');
+        }
+        
+    }
+
     resetGame() {
         this.enterPlayingState();
-        this.player = new Player(this.game, structuredClone(ninjaData));
-        this.player2 = new Player(this.game, structuredClone(wizardData));
-        this.player.position.x = this.player.combatModule.hurtbox.size.x + 20;
-        this.player.position.y = 0;
-        this.player.facingRight = true;
-        this.player2.position.x = canvas.width - this.player2.combatModule.hurtbox.size.x - 20;
-        this.player.position.y = 0;
-        this.player2.facingRight = false;
-        this.timeRemaining = 30000;
+        this.timeRemaining = 999 * 1000;
         this.lastTick = Date.now();
-        this.updateHealthBarElement(p1HealthBarElement, this.player);
-        this.updateHealthBarElement(p2HealthBarElement, this.player2);
+        this.updateTimer();
         this.enterPlayingState();
     }
     enter() {
@@ -81,6 +100,7 @@ class PlayingState extends State {
     }
 
     updateInternalState() {
+        if (this.player == null || this.player2 == null) return;
         if (this.player.combatModule.getIsDead() || this.player2.combatModule.getIsDead()) {
             this.enterFinishedState();
         } else if (this.timeRemaining <= 0) {
@@ -97,12 +117,45 @@ class PlayingState extends State {
         super.update();
         this.updateInternalState();
         if (this.internalState != InternalPlayingState.paused) {
-            this.updateTimer();
+            if (this.player != null && this.player2 != null) this.updateTimer();
             this.handleCollisions();
-            this.player.update();
-            this.player2.update();
+            if (this.player != null) this.player.update();
+            if (this.player2 != null) this.player2.update();
         }
         this.lastTick = Date.now();
+    }
+
+    setToDestroyPlayer(playerNumber) {
+        switch (playerNumber) {
+            case PlayerNumber.ONE:
+                this.player = null;
+                break;
+            case PlayerNumber.TWO:
+                break;
+            default:
+                throw new Error('Unhandled playerNumber in setToDestroyPlayer');
+        }
+    }
+
+    updatePlayer(playerNumber, playerData) {
+        switch (playerNumber) {
+            case PlayerNumber.ONE:
+                if (this.player == null) this.createPlayer(playerNumber);
+                for (const key in playerData) {
+                    switch (key) {
+                        case 'currentSprite':
+                            this.player.switchSpriteByUrl(playerData[key].imageUrl);
+                            break;
+                        default:
+                            this.player[key] = playerData[key];
+                    }
+                }
+                break;
+            case PlayerNumber.TWO:
+                break;
+            default:
+                throw new Error('Unhandled player number in updatePlayer');
+        }
     }
     drawFilters() {
         ctx.fillStyle = 'rgba(255, 255, 255, .25)'
@@ -113,8 +166,8 @@ class PlayingState extends State {
         if (this.internalState != InternalPlayingState.paused) {
             this.background.draw();
             this.drawFilters();
-            this.player.draw();
-            this.player2.draw();
+            if (this.player != null) this.player.draw();
+            if (this.player2 != null) this.player2.draw();
             drawGuides();
         }
     }
@@ -202,30 +255,8 @@ class PlayingState extends State {
     }
 
     handlePlayingInput() {
+        if (this.currentPlayer == null) return;
         let inputManager = this.game.inputManager;
-
-        if (this.pausePressed && !inputManager.isKeyDown('1') && !inputManager.isKeyDown('9')) {
-            this.pausePressed = false;
-        }
-
-        let pausePressed;
-        for (let key of inputManager.keysDown) {
-            switch(key) {
-                case '1':
-                case '9':
-                    pausePressed = true;
-                default:
-                    break;
-            }
-        }
-
-        if (!this.pausePressed && pausePressed) {
-            this.startPause();
-            return;
-        }
-
-        let player = this.player;
-        let player2 = this.player2;
 
         //player 1
         let leftPressed, rightPressed, jumpPressed, attackPressed, attack2Pressed; 
@@ -248,6 +279,8 @@ class PlayingState extends State {
                     break;
             }
         }
+
+        const player = this.currentPlayer;
         
         if (!player.combatModule.getIsReceivingDamage()) {
             if (leftPressed) {
@@ -281,61 +314,6 @@ class PlayingState extends State {
                 if (player.combatModule.getCanAttack()) {
                     player.combatModule.performAttack(1);
                     
-                }
-            }
-        }
-        
-        // player 2
-        let leftPressed2, rightPressed2, jumpPressed2, attackPressed2, attack2Pressed2; 
-        for (let key of inputManager.keysDown) {
-            switch(key) {
-                case 'j':
-                    leftPressed2 = true;
-                    break;
-                case 'l':
-                    rightPressed2 = true;
-                    break;
-                case 'i':
-                    jumpPressed2 = true;
-                    break;
-                case 'o':
-                    attackPressed2 = true;
-                case 'u':
-                    attack2Pressed2 = true;
-                default:
-                    break;
-            }
-        }
-        if (!player2.combatModule.getIsReceivingDamage()) {
-            if (leftPressed2) {
-                if (!player2.combatModule.getIsAttacking()) {
-                    player2.velocity.x = -player2.speed;
-                    player2.facingRight = false;
-                }
-            } else if (rightPressed2) {
-                if (!player2.combatModule.getIsAttacking()) {
-                    player2.velocity.x = player2.speed;
-                    player2.facingRight = true;
-                }
-            } else {
-                if (player2.grounded && !player2.combatModule.getIsReceivingDamage()) {
-                    player2.velocity.x = 0;
-                }
-            }
-            if (jumpPressed2) {
-                if (player2.grounded && !player2.combatModule.getIsAttacking()) {
-                    player2.velocity.y = -player2.jumpSpeed;
-                    player2.grounded = false;
-                }
-            }
-            if (attackPressed2) {
-                if (player2.combatModule.getCanAttack()) {
-                    player2.combatModule.performAttack(0);
-                }
-            }
-            if (attack2Pressed2) {
-                if (player2.combatModule.getCanAttack()) {
-                    player2.combatModule.performAttack(1);
                 }
             }
         }

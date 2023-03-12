@@ -36,25 +36,28 @@ class Player extends Sprite {
             this.position.y += this.velocity.y;
         }
 
-        if (this.combatModule.getIsDead() || this.lostMatch) {
-            this.switchSprite('death');
-        } else if (this.combatModule.getIsReceivingDamage()) {
-            this.switchSprite('takeHit');
-        } else if (this.combatModule.getIsAttacking()) {
-            this.switchSprite(this.combatModule.getLastAttackData().spriteName);
-        } else if (!this.grounded) {
-            if (this.velocity.y > 0) {
-                this.switchSprite('fall');
+        if (this.isCurrentPlayer) {
+            if (this.combatModule.getIsDead() || this.lostMatch) {
+                this.switchSprite('death');
+            } else if (this.combatModule.getIsReceivingDamage()) {
+                this.switchSprite('takeHit');
+            } else if (this.combatModule.getIsAttacking()) {
+                this.switchSprite(this.combatModule.getLastAttackData().spriteName);
+            } else if (!this.grounded) {
+                if (this.velocity.y > 0) {
+                    this.switchSprite('fall');
+                } else {
+                    this.switchSprite('jump');
+                }
             } else {
-                this.switchSprite('jump');
-            }
-        } else {
-            if (this.velocity.x != 0) {
-                this.switchSprite('run');
-            } else {
-                this.switchSprite('idle')
+                if (this.velocity.x != 0) {
+                    this.switchSprite('run');
+                } else {
+                    this.switchSprite('idle')
+                }
             }
         }
+        
 
     }
 
