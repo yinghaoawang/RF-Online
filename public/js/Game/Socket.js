@@ -9,29 +9,31 @@ const handleP1Click = () => {
     socket.emit('selectPlayer', { playerNumber: PlayerNumber.ONE });
 };
 
-p1Button.addEventListener('click', handleP1Click)
+const handleP2Click = () => {
+    socket.emit('selectPlayer', { playerNumber: PlayerNumber.TWO });
+};
+
+p1Button.addEventListener('click', handleP1Click);
+p2Button.addEventListener('click', handleP2Click);
 
 const onConnect = () => {
     console.log('connected');
     isConnected = true;
 
-    socket.on('failed', () => {
-        alert('Failed');
+    socket.on('failed', (data) => {
+        let message = null;
+        if (data == null || data.message == null) {
+            message = 'Failed'
+        } else {
+            message = data.message;
+        }
+        alert(message);
     })
 
     socket.on('playerData', ({ playerNumber, playerData, id }) => {
-        switch (playerNumber) {
-            case PlayerNumber.ONE:
-                if (id !== socket.id) {
-                    game.playingState.updatePlayer(PlayerNumber.ONE, playerData);
-                }
-                break;
-            case PlayerNumber.TWO:
-                break;
-            default:
-                throw new Error('Unhandled type in playerData');
+        if (id !== socket.id) {
+            game.playingState.updatePlayer(playerNumber, playerData);
         }
-        
     });
 
     socket.on('destroyPlayer', ({ playerNumber }) => {

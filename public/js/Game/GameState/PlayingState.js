@@ -5,7 +5,7 @@ let p2HealthBarElement = document.getElementById("playerTwoHealthBar");
 hideElementRecursive(playingDiv);
 
 let showAll = false;
-let showGrid = false, showHurtboxes = false, showHitboxes = false;
+let showGrid = false, showHurtboxes = true, showHitboxes = true;
 let checkboxesDiv = document.getElementById("checkboxes");
 hideElementRecursive(checkboxesDiv);
 
@@ -33,25 +33,36 @@ class PlayingState extends State {
     }
 
     createPlayer(playerNumber, setAsCurrentPlayer) {
+        const player = new Player(this.game, structuredClone(ninjaData));
+        player.position.y = 0;
+        console.log(playerNumber, setAsCurrentPlayer);
+
         switch (playerNumber) {
             case PlayerNumber.ONE:
-                const player = new Player(this.game, structuredClone(ninjaData));
                 player.position.x = player.combatModule.hurtbox.size.x + 20;
-                player.position.y = 0;
                 player.facingRight = true;
+
                 this.updateHealthBarElement(p1HealthBarElement, player);
                 this.player = player;
-                if (setAsCurrentPlayer) {
-                    player.isCurrentPlayer = true;
-                    this.currentPlayer = player;
-                }
-                return player;
+                break;
+
             case PlayerNumber.TWO:
+                player.position.x = canvas.width - player.combatModule.hurtbox.size.x - 20;
+                player.facingRight = false;
+
+                this.updateHealthBarElement(p2HealthBarElement, player);
+                this.player2 = player;
                 break;
             default:
                 throw new Error('Unhandled player number in createPlayer');
         }
-        
+
+        if (setAsCurrentPlayer) {
+            player.isCurrentPlayer = true;
+            this.currentPlayer = player;
+        }
+
+        return player;
     }
 
     resetGame() {
@@ -131,6 +142,7 @@ class PlayingState extends State {
                 this.player = null;
                 break;
             case PlayerNumber.TWO:
+                this.player2 = null;
                 break;
             default:
                 throw new Error('Unhandled playerNumber in setToDestroyPlayer');
@@ -138,23 +150,28 @@ class PlayingState extends State {
     }
 
     updatePlayer(playerNumber, playerData) {
+        let player = null;
         switch (playerNumber) {
             case PlayerNumber.ONE:
                 if (this.player == null) this.createPlayer(playerNumber);
-                for (const key in playerData) {
-                    switch (key) {
-                        case 'currentSprite':
-                            this.player.switchSpriteByUrl(playerData[key].imageUrl);
-                            break;
-                        default:
-                            this.player[key] = playerData[key];
-                    }
-                }
+                player = this.player;
                 break;
             case PlayerNumber.TWO:
+                if (this.player2 == null) this.createPlayer(playerNumber);
+                player = this.player2;
                 break;
             default:
                 throw new Error('Unhandled player number in updatePlayer');
+        }
+
+        for (const key in playerData) {
+            switch (key) {
+                case 'currentSprite':
+                    player.switchSpriteByUrl(playerData[key].imageUrl);
+                    break;
+                default:
+                    player[key] = playerData[key];
+            }
         }
     }
     drawFilters() {
