@@ -35,7 +35,7 @@ class PlayingState extends State {
     createPlayer(playerNumber, setAsCurrentPlayer) {
         const player = new Player(this.game, structuredClone(ninjaData));
         player.position.y = 0;
-        console.log(playerNumber, setAsCurrentPlayer);
+        player.playerNumber = playerNumber;
 
         switch (playerNumber) {
             case PlayerNumber.ONE:
@@ -111,6 +111,12 @@ class PlayingState extends State {
     }
 
     updateInternalState() {
+        if (this.currentPlayer?.combatModule?.getIsDead()) {
+            setTimeout(() => {
+                this.createPlayer(this.currentPlayer.playerNumber, true);
+            }, 1500);
+        }
+
         if (this.player == null || this.player2 == null) return;
         if (this.player.combatModule.getIsDead() || this.player2.combatModule.getIsDead()) {
             // this.enterFinishedState();
@@ -166,6 +172,12 @@ class PlayingState extends State {
 
         for (const key in playerData) {
             switch (key) {
+                case 'combatModule':
+                    const combatModule = playerData[key];
+                    for (const [key, value] of Object.entries(combatModule)) {
+                        player.combatModule[key] = value;
+                    }
+                break;
                 case 'currentSprite':
                     player.switchSpriteByUrl(playerData[key].imageUrl);
                     break;
@@ -221,7 +233,6 @@ class PlayingState extends State {
         this.player2.combatModule.lastDamagedTime += Date.now() - this.lastPausedTime;
         outerContainerDiv.classList.remove("paused");
     }
-
     handleFinishedInput() {
         let inputManager = this.game.inputManager;
 
@@ -275,7 +286,6 @@ class PlayingState extends State {
         if (this.currentPlayer == null) return;
         let inputManager = this.game.inputManager;
 
-        //player 1
         let leftPressed, rightPressed, jumpPressed, attackPressed, attack2Pressed; 
         for (let key of inputManager.keysDown) {
             switch(key) {

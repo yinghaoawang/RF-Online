@@ -44,13 +44,16 @@ const onConnect = () => {
     });
 
     socket.on('createPlayer', ({ playerNumber, isCurrentPlayer }) => {
+        console.log(playerNumber);
         game.playingState.createPlayer(playerNumber, isCurrentPlayer);
         console.log('create player');
         const fps = 1000 / 60;
 
         setInterval(() => {
-            const { position, velocity, facingRight, animatingFrames, currentSprite } = game.playingState.currentPlayer;
-            const playerData = { position, velocity, facingRight, animatingFrames, currentSprite };
+            const { position, velocity, facingRight, animatingFrames, currentSprite, playerNumber } = game.playingState.currentPlayer;
+            const { attacking, lastAttackTime, attackData, lastAttackIndex, health } = game.playingState.currentPlayer.combatModule;
+            const combatModule = { attacking, lastAttackTime, attackData, lastAttackIndex, health };
+            const playerData = { position, velocity, facingRight, animatingFrames, currentSprite, combatModule };
             socket.emit('playerData', { playerNumber, playerData, facingRight });
         }, fps);
     });

@@ -91,7 +91,7 @@ class CombatModule extends PlayerModule {
         }
 
         targetPlayer.combatModule.health -= this.getLastAttackData().damage;
-        this.getLastAttackData().unitsHitList.push(targetPlayer);
+        this.getLastAttackData().unitsHitList.push(targetPlayer.playerNumber);
         targetPlayer.combatModule.receivingDamage = true;
         targetPlayer.combatModule.lastDamagedTime = Date.now();
         targetPlayer.combatModule.attacking = false;
@@ -121,7 +121,7 @@ class CombatModule extends PlayerModule {
 
     canDamagePlayer(targetPlayer) {
         for (let unitHit of this.getLastAttackData().unitsHitList) {
-            if (unitHit == targetPlayer) return false;
+            if (unitHit == targetPlayer.playerNumber) return false;
         }
         return true;
     }
