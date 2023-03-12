@@ -17,7 +17,7 @@ const PlayerNumber = {
 }
 
 const basename = process.env.NODE_ENV == 'production' ? '/' : '/rf-online';
-app.use('/', express.static('public'));
+app.use(basename, express.static('public'));
 
 let player1 = null;
 let player2 = null;
