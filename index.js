@@ -11,7 +11,7 @@ const server = process.env.NODE_ENV == 'production' ? https.createServer({
  }, app) : http.createServer(app);
 
  const io = require('socket.io')(server, {
-   // secure: process.env.NODE_ENV == 'production' ? true : false,
+   secure: process.env.NODE_ENV == 'production' ? true : false,
    transports: ['websocket'],
  });
 
@@ -20,7 +20,8 @@ const PlayerNumber = {
    TWO: 2
 }
 
-app.use('/', express.static('public'));
+const basename = process.env.NODE_ENV === 'production' ? '/' : '/rf-online';
+app.use(basename + '/', express.static('public'));
 
 let player1 = null;
 let player2 = null;
