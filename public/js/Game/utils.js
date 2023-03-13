@@ -2,7 +2,7 @@
 function playerAttackCollision(p1, p2) {
     let p1Hitbox = p1.combatModule.getActiveAttackHitbox();
     let p2Hurtbox = p2.combatModule.hurtbox;
-
+    
     let rectA = {
         x: p1.position.x + (p1.facingRight ? p1Hitbox.offset.x : -p1Hitbox.offset.x -p1Hitbox.size.x),
         y: p1.position.y + p1Hitbox.offset.y,
