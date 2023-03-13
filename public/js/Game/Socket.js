@@ -1,7 +1,10 @@
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
-const url = 'http://localhost:1260';
+
+const isLocalhost = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+
+const url = isLocalhost ? 'localhost:1260' : 'www.yinghaowang.com:1260';
 const options = {
-   transports: ['websocket'],
+    transports: ['websocket']
 }
 const socket = io(url, options);
 

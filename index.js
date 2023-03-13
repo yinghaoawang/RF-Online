@@ -1,14 +1,27 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
+const expressApp = express();
+
+const fs = require('fs');
+const key = fs.readFileSync(process.env.PATH_TO_PRIVATE_KEY);
+const cert = fs.readFileSync(process.env.PATH_TO_CERTIFICATE);
+const https = require('https');
+const credentials = { key, cert };
+const ioServer = https.createServer(credentials, app);
+//const expressServer = https.createServer(credentials, expressApp);
 
 const http = require('http');
+//const ioServer = http.createServer(app);
+const expressServer = http.createServer(expressApp);
 
-const server = http.createServer(app);
+const SOCKET_PORT = 1260;
+const EXPRESS_PORT = 1255;
 
- const io = require('socket.io')(server, {
-   transports: ['websocket'],
+const io = require('socket.io')(ioServer, {
+    transports: ['websocket'],
  });
+
 
 const PlayerNumber = {
    ONE: 1,
@@ -16,7 +29,7 @@ const PlayerNumber = {
 }
 
 const basename = process.env.NODE_ENV == 'production' ? '/' : '/rf-online';
-app.use(basename, express.static('public'));
+expressApp.use(basename, express.static('public'));
 
 let player1 = null;
 let player2 = null;
@@ -98,7 +111,9 @@ io.on('connection', function(socket) {
    });
 });
 
-const PORT = 1260;
-server.listen(PORT, () => {
-   console.log(`Listening on port ${ PORT }`);
+ioServer.listen(SOCKET_PORT, () => {
+   console.log(`Socket.io listening on port ${ SOCKET_PORT }`);
+});
+expressServer.listen(EXPRESS_PORT, () => {
+    console.log(`Express listening on port ${ EXPRESS_PORT }`);
 });
