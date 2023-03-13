@@ -1,19 +1,19 @@
 require('dotenv').config();
 const express = require('express');
+const fs = require('fs');
+const http = require('http');
+const https = require('https');
 const app = express();
 const expressApp = express();
-
-const fs = require('fs');
-const key = fs.readFileSync(process.env.PATH_TO_PRIVATE_KEY);
-const cert = fs.readFileSync(process.env.PATH_TO_CERTIFICATE);
-const https = require('https');
-const credentials = { key, cert };
-const ioServer = https.createServer(credentials, app);
+const expressServer = http.createServer(expressApp);
 //const expressServer = https.createServer(credentials, expressApp);
 
-const http = require('http');
 //const ioServer = http.createServer(app);
-const expressServer = http.createServer(expressApp);
+
+const ioServer = process.env.NODE_ENV === 'production' ? https.createServer({
+   key: fs.readFileSync(process.env.PATH_TO_PRIVATE_KEY),
+   cert: fs.readFileSync(process.env.PATH_TO_CERTIFICATE)
+}, app) : http.createServer(app);
 
 const SOCKET_PORT = 1260;
 const EXPRESS_PORT = 1255;
