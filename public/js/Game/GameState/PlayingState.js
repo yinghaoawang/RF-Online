@@ -41,21 +41,17 @@ class PlayingState extends State {
             case PlayerNumber.ONE:
                 player.position.x = player.combatModule.hurtbox.size.x + 20;
                 player.facingRight = true;
-
-                this.updateHealthBarElement(p1HealthBarElement, player);
                 this.player = player;
                 break;
-
             case PlayerNumber.TWO:
                 player.position.x = canvas.width - player.combatModule.hurtbox.size.x - 20;
                 player.facingRight = false;
-
-                this.updateHealthBarElement(p2HealthBarElement, player);
                 this.player2 = player;
                 break;
             default:
                 throw new Error('Unhandled player number in createPlayer');
         }
+        this.updateHealthBarElement(playerNumber);
 
         if (setAsCurrentPlayer) {
             player.isCurrentPlayer = true;
@@ -174,9 +170,12 @@ class PlayingState extends State {
             switch (key) {
                 case 'combatModule':
                     const combatModule = playerData[key];
-                    for (const [key, value] of Object.entries(combatModule)) {
-                        player.combatModule[key] = value;
+                    const { attacking, lastAttackIndex, health } = combatModule;
+                    if (attacking && player.combatModule.getIsAttacking() == false) {
+                        player.combatModule.performAttack(lastAttackIndex);
                     }
+                    player.combatModule.health = health;
+                    this.updateHealthBarElement(playerNumber);
                 break;
                 case 'currentSprite':
                     player.switchSpriteByUrl(playerData[key].imageUrl);
@@ -346,7 +345,22 @@ class PlayingState extends State {
         }
     }
 
-    updateHealthBarElement(healthBarElement, player) {
+    updateHealthBarElement(playerNumber) {
+        let player;
+        let healthBarElement;
+        switch (playerNumber) {
+            case PlayerNumber.ONE:
+                player = this.player;
+                healthBarElement = p1HealthBarElement;
+                break;
+            case PlayerNumber.TWO:
+                player = this.player2;
+                healthBarElement = p2HealthBarElement;
+                break;
+            default:
+                console.log(playerNumber);
+                throw new Error('Unhandled playerNumber in updateHealthBarElement');
+        }
         healthBarElement.style.width = Math.max(0, (player.combatModule.health / player.combatModule.maxHealth)) * 100 + "%";
     }
 
@@ -358,12 +372,12 @@ class PlayingState extends State {
     
         if (player.combatModule.getIsAttacking() && playerAttackCollision(player, player2)) {
             player.combatModule.damagePlayer(player2);
-            this.updateHealthBarElement(p2HealthBarElement, player2);
+            this.updateHealthBarElement(PlayerNumber.TWO);
         }
     
         if (player2.combatModule.getIsAttacking() && playerAttackCollision(player2, player)) {
             player2.combatModule.damagePlayer(player);
-            this.updateHealthBarElement(p1HealthBarElement, player)
+            this.updateHealthBarElement(PlayerNumber.ONE)
         }
     }
 }

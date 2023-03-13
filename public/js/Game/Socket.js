@@ -22,9 +22,12 @@ const handleP2Click = () => {
 p1Button.addEventListener('click', handleP1Click);
 p2Button.addEventListener('click', handleP2Click);
 
+let interval;
+
 const onConnect = () => {
     console.log('connected');
     isConnected = true;
+    if (interval != null) clearInverval(interval);
 
     socket.on('failed', (data) => {
         let message = null;
@@ -52,17 +55,19 @@ const onConnect = () => {
         console.log('create player');
         const fps = 1000 / 60;
 
-        setInterval(() => {
+        interval = setInterval(() => {
             const { position, velocity, facingRight, animatingFrames, currentSprite, playerNumber } = game.playingState.currentPlayer;
             const { attacking, lastAttackTime, attackData, lastAttackIndex, health } = game.playingState.currentPlayer.combatModule;
-            const combatModule = { attacking, lastAttackTime, attackData, lastAttackIndex, health };
+            const combatModule = { attacking, lastAttackIndex, health };
             const playerData = { position, velocity, facingRight, animatingFrames, currentSprite, combatModule };
+            // console.log(combatModule);
             socket.emit('playerData', { playerNumber, playerData, facingRight });
         }, fps);
     });
 
     socket.on('disconnect', () => {
         console.log('disconnected');
+        if (interval != null) clearInterval(interval);
         isConnected = false;
     });
 }
