@@ -1,5 +1,8 @@
 class Player extends Sprite {
-    constructor(game, {spriteOffset={x: 0, y:0}, position={x: 0, y: 0}, targetSize, maxHealth = 100, hurtbox={offset: {x: 0, y: 0}, size: {x:80, y:150}}, facingRight=true, speed=8, jumpSpeed=40, velocity={x:0, y:0}, sprites, attackData}) {
+    constructor(game, {spriteOffset={x: 0, y:0}, position={x: 0, y: 0}, targetSize,
+        maxHealth = 100, hurtbox={offset: {x: 0, y: 0}, size: {x:80, y:150}},
+        facingRight=true, speed=8, jumpSpeed=32, velocity={x:0, y:0}, sprites, attackData}) {
+
         super({position, spriteOffset, targetSize, facingRight, sprites});
         this.game = game;
         this.combatModule = new CombatModule(this, maxHealth, hurtbox, attackData);

@@ -1,7 +1,6 @@
-
 class Game {
     constructor() {
-        this.gravity = 2.2;
+        this.gravity = 1.5;
         
         this.inputManager = new InputManager(this);
 
@@ -11,8 +10,13 @@ class Game {
     }
 
     gameLoop() {
+        const fps = 1000 / 80
         this.stateMachine.handleInputs();
-        this.stateMachine.update();
+
+        if (this.lastUpdated == null || this.lastUpdated + fps <= Date.now()) {
+            this.stateMachine.update();
+            this.lastUpdated = Date.now();
+        }
         this.stateMachine.draw();
         
         requestAnimationFrame(this.gameLoop.bind(this));

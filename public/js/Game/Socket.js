@@ -27,7 +27,7 @@ let interval;
 const onConnect = () => {
     console.log('connected');
     isConnected = true;
-    if (interval != null) clearInverval(interval);
+    if (interval != null) clearInterval(interval);
 
     socket.on('failed', (data) => {
         let message = null;
