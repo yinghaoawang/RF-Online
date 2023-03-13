@@ -162,6 +162,7 @@ class CombatModule extends PlayerModule {
             ctx.scale(this.player.facingRight ? 1 : -1, 1);
 
             let currentHitbox = this.getActiveAttackHitbox();
+            if (currentHitbox == null) return;
 
             ctx.strokeRect(currentHitbox.offset.x, currentHitbox.offset.y,
                 currentHitbox.size.x, currentHitbox.size.y);

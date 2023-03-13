@@ -177,7 +177,7 @@ class PlayingState extends State {
                     for (const [key, value] of Object.entries(combatModule)) {
                         player.combatModule[key] = value;
                     }
-                break;
+                    break;
                 case 'currentSprite':
                     player.switchSpriteByUrl(playerData[key].imageUrl);
                     break;

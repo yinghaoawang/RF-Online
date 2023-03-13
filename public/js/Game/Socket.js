@@ -54,8 +54,8 @@ const onConnect = () => {
 
         setInterval(() => {
             const { position, velocity, facingRight, animatingFrames, currentSprite, playerNumber } = game.playingState.currentPlayer;
-            const { attacking, lastAttackTime, attackData, lastAttackIndex, health } = game.playingState.currentPlayer.combatModule;
-            const combatModule = { attacking, lastAttackTime, attackData, lastAttackIndex, health };
+            const { attacking, lastAttackTime, attackData, lastAttackIndex, lastDamagedTime, health } = game.playingState.currentPlayer.combatModule;
+            const combatModule = { attacking, lastAttackTime, attackData, lastAttackIndex, lastDamagedTime, health };
             const playerData = { position, velocity, facingRight, animatingFrames, currentSprite, combatModule };
             socket.emit('playerData', { playerNumber, playerData, facingRight });
         }, fps);
