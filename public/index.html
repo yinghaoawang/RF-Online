@@ -15,7 +15,7 @@
                     <div style="flex-basis: 100%"></div>
                     <div class="menu-logo">Fighter</div>
                     <div style="position: absolute; display: flex; height: 140%; align-items: end;">
-                        <span class="menu-press-start blink">Press T</span>
+                        <span class="menu-press-start blink">Awaiting Room</span>
                     </div>
                 </div>
             </div>
@@ -42,10 +42,24 @@
             </div>
             <canvas id="canvas"></canvas>
         </div>
-        <div id="playAsButtons">
-            <button id="joinP1Button">Join as Player 1</button>
-            <button id="joinP2Button">Join as Player 2</button>
+        <div hidden id="menuInputs">
+            <button style="margin-right: 25px" id="createRoomButton">Create New Room</button>
+            <select type="dropdown">
+                <option style="width: 200px" value="">Select a Room</option>
+            </select>
+            <button disabled id="joinRoomButton">Join Room</button>
         </div>
+
+        <div id="roomInputs">
+            <div style="width: 70px; display: inline-block">Room </div>
+            <button id="leaveButton">Leave Room</button>
+            <div style="margin-top: 5px" id="playAsButtons">
+                <button id="joinP1Button">Join as Player 1</button>
+                <button id="joinP2Button">Join as Player 2</button>
+            </div>
+        </div>
+        
+
         <div id="checkboxes">
             <div><label><input id="gridCheckbox" type="checkbox" /> Show Grid</label></div>
             <div><input id="hurtboxCheckbox" type="checkbox" /><label for="hurtboxCheckbox"> Show Hurtboxes</label></div>

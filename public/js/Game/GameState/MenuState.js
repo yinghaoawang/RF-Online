@@ -16,29 +16,29 @@ class MenuState extends State {
         super.enter();
         showElementRecursive(menuDiv);
             
-        const clickListener = {
-            type: 'click',
-            callback: (e) => this.game.stateMachine.changeState(this.game.playingState),
-        };
-        this.addEventListener(clickListener);
+        // const clickListener = {
+        //     type: 'click',
+        //     callback: (e) => this.game.stateMachine.changeState(this.game.playingState),
+        // };
+        // this.addEventListener(clickListener);
     }
     handleInputs() {
         super.handleInputs();
         let inputManager = this.game.inputManager;
         
-        let startPressed;
-        for (let key of inputManager.keysDown) {
-            switch(key) {
-                case 't':
-                    startPressed = true;
-                default:
-                    break;
-            }
-        }
+        // let startPressed;
+        // for (let key of inputManager.keysDown) {
+        //     switch(key) {
+        //         case 't':
+        //             startPressed = true;
+        //         default:
+        //             break;
+        //     }
+        // }
 
-        if (startPressed) {
-            this.game.stateMachine.changeState(this.game.playingState);
-        }
+        // if (startPressed) {
+        //     this.game.stateMachine.changeState(this.game.playingState);
+        // }
     }
     exit() {
         super.exit();

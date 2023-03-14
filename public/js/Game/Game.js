@@ -23,8 +23,8 @@ class Game {
     }
 
     start() {
-        // this.stateMachine.changeState(this.menuState);
-        this.stateMachine.changeState(this.playingState);
+        this.stateMachine.changeState(this.menuState);
+        // this.stateMachine.changeState(this.playingState);
         requestAnimationFrame(this.gameLoop.bind(this));
     }
 }
