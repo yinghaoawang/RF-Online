@@ -1,16 +1,16 @@
-const p1Button = document.getElementById('joinP1Button');
-const p2Button = document.getElementById('joinP2Button');
+const p1ButtonElement = document.getElementById('joinP1Button');
+const p2ButtonElement = document.getElementById('joinP2Button');
 
 const menuDiv = document.getElementById('menuDiv');
 const menuBackgroundElement = document.getElementById('menuBackground');
-const menuBackgroundFilterDiv = document.getElementById('menuBackgroundFilter');
+const menuBackgroundFilterElement = document.getElementById('menuBackgroundFilter');
 hideElementRecursive(menuDiv);
 
-const outerContainerDiv = document.getElementById('outerContainerDiv');
-const playingDiv = document.getElementById('playingDiv');
+const outerContainerElement = document.getElementById('outerContainerDiv');
+const playingElement = document.getElementById('playingDiv');
 const p1HealthBarElement = document.getElementById('playerOneHealthBar');
 const p2HealthBarElement = document.getElementById('playerTwoHealthBar');
-hideElementRecursive(playingDiv);
+hideElementRecursive(playingElement);
 
 const showAll = false;
 const showGrid = false, showHurtboxes = true, showHitboxes = true;
@@ -21,9 +21,16 @@ const timerElement = document.getElementById('timer');
 const winnerTextElement = document.getElementById('winnerText');
 const winnerHelperTextElement = document.getElementById('winnerHelperText');
 
+const menuInputsElement = document.getElementById('menuInputs');
+const roomInputsElement = document.getElementById('roomInputs');
+
 const roomsDropdownElement = document.getElementById('roomsDropdown');
 const joinRoomButtonElement = document.getElementById('joinRoomButton');
+const leaveRoomButtonElement = document.getElementById('leaveRoomButton');
+const createRoomButtonElement = document.getElementById('createRoomButton');
+
 let selectedRoomName = null;
+const roomTextElement = document.getElementById('roomText');
 
 roomsDropdownElement.addEventListener('change', function() {
     if (this.value == '') {
@@ -45,6 +52,7 @@ const addOptionToDropdown = ({ select, value, text }) => {
 const resetRoomSelect = () => {
     for (let i = 0; i < roomsDropdownElement.length; i++) {
         roomsDropdownElement.remove(i);
+        i--;
     }
     addOptionToDropdown({ value: '', text: 'Select a Room', select: roomsDropdownElement });
 }

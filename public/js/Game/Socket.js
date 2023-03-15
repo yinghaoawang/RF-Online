@@ -16,8 +16,36 @@ const handleP2Click = () => {
     socket.emit('selectPlayer', { playerNumber: PlayerNumber.TWO });
 };
 
-p1Button.addEventListener('click', handleP1Click);
-p2Button.addEventListener('click', handleP2Click);
+const startGame = ({ roomName }) => {
+    game.stateMachine.changeState(game.playingState);
+    menuInputsElement.setAttribute('hidden', true);
+    roomInputsElement.removeAttribute('hidden');
+    roomTextElement.innerHTML = 'Room ' + roomName;
+}
+
+const leaveGame = () => {
+    game.stateMachine.changeState(game.menuState);
+    roomInputsElement.setAttribute('hidden', true);
+    menuInputsElement.removeAttribute('hidden');
+    resetRoomSelect();
+    socket.emit('getChannels');
+}
+
+p1ButtonElement.addEventListener('click', handleP1Click);
+p2ButtonElement.addEventListener('click', handleP2Click);
+
+const handleJoinRoomClick = () => {
+    socket.emit('joinRoom', { roomName: selectedRoomName });
+}
+
+const handleLeaveRoomClick = () => {
+    socket.emit('leaveRoom', { roomName: selectedRoomName });
+    leaveGame();
+}
+
+joinRoomButtonElement.addEventListener('click', handleJoinRoomClick);
+leaveRoomButtonElement.addEventListener('click', handleLeaveRoomClick);
+createRoomButtonElement.addEventListener('click', handleCreateRoomClick);
 
 let interval;
 
@@ -26,13 +54,20 @@ const onConnect = () => {
     isConnected = true;
     if (interval != null) clearInterval(interval);
 
+    socket.on('startGame', ({ roomName }) => {
+        startGame({ roomName });
+    });
+
+    socket.on('leaveGame', () => {
+        leaveGame();
+    });
+
     socket.on('rooms', ({ roomData }) => {
-            resetRoomSelect();
-    for (const room of roomData) {
-            const { name, user } = room;
+        resetRoomSelect();
+        for (const room of roomData) {
             addRoomToSelect(room);
         }
-    })
+    });
 
     socket.on('failed', (data) => {
         let message = null;
@@ -42,7 +77,7 @@ const onConnect = () => {
             message = data.message;
         }
         alert(message);
-    })
+    });
 
     socket.on('playerData', ({ playerNumber, playerData, id }) => {
         if (id !== socket.id) {
@@ -72,6 +107,7 @@ const onConnect = () => {
     socket.on('disconnect', () => {
         console.log('disconnected');
         if (interval != null) clearInterval(interval);
+        leaveGame();
         isConnected = false;
     });
 }

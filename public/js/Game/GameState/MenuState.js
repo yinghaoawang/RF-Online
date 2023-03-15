@@ -3,8 +3,8 @@ class MenuState extends State {
         super();
         menuBackgroundElement.width = canvas.width;
         menuBackgroundElement.height = canvas.height;
-        menuBackgroundFilterDiv.style.width = canvas.width;
-        menuBackgroundFilterDiv.style.height = canvas.height;
+        menuBackgroundFilterElement.style.width = canvas.width;
+        menuBackgroundFilterElement.style.height = canvas.height;
         this.game = game;
     }
     enter() {

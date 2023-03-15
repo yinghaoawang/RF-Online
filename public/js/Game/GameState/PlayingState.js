@@ -55,12 +55,12 @@ class PlayingState extends State {
     }
     enter() {
         super.enter();
-        showElementRecursive(playingDiv);
+        showElementRecursive(playingElement);
         this.resetGame();
     }
     exit() {
         super.exit();
-        hideElementRecursive(playingDiv);
+        hideElementRecursive(playingElement);
     }
     enterPlayingState() {
         this.internalState = InternalPlayingState.playing;
@@ -204,7 +204,7 @@ class PlayingState extends State {
         this.internalState = InternalPlayingState.paused;
         this.pausePressed = true;
         this.lastPausedTime = Date.now();
-        outerContainerDiv.classList.add("paused");
+        outerContainerElement.classList.add("paused");
     }
     endPause() {
         this.internalState = InternalPlayingState.playing;
@@ -215,7 +215,7 @@ class PlayingState extends State {
         this.player2.lastFrameDrawn += Date.now() - this.lastPausedTime;
         this.player2.combatModule.lastAttackTime += Date.now() - this.lastPausedTime;
         this.player2.combatModule.lastDamagedTime += Date.now() - this.lastPausedTime;
-        outerContainerDiv.classList.remove("paused");
+        outerContainerElement.classList.remove("paused");
     }
     handleFinishedInput() {
         let inputManager = this.game.inputManager;

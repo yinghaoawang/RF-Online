@@ -48,8 +48,6 @@ const getRoomData = () => {
       gameRooms.push({ name: key, users: [...value] });
    }
 
-   console.log('game rooms', gameRooms);
-
    return gameRooms;
 }
 
@@ -59,9 +57,28 @@ io.on('connection', function(socket) {
    socket.join('asdfas2');
    socket.join('asdfass3');
 
-   const roomData = getRoomData();
+   socket.emit('rooms', { roomData: getRoomData() });
 
-   socket.emit('rooms', { roomData });
+   socket.on('getRooms', () => {
+      socket.emit({ roomData: getRoomData() });
+   });
+
+   socket.on('joinRoom', ({ roomName }) => {
+      const roomData = getRoomData();
+      const room = roomData.find(r => r.name === roomName);
+      if (room == null) {
+         socket.emit('failed', { message: 'Room not found' });
+         return;
+      }
+
+      // if (room.users.length >= 2) {
+      //    socket.emit('failed', { message: 'Room is full' });
+      //    return;
+      // }
+
+      socket.join(room.name);
+      socket.emit('startGame', { roomName: room.name });
+   });
 
    socket.on('playerData', ({ playerNumber, playerData }) => {
       if (playerData == null) {
