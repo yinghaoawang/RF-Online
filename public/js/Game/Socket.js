@@ -29,6 +29,7 @@ const leaveGame = () => {
     menuInputsElement.removeAttribute('hidden');
     resetRoomSelect();
     socket.emit('getChannels');
+    if (interval != null) clearInterval(interval);
 }
 
 p1ButtonElement.addEventListener('click', handleP1Click);
@@ -99,6 +100,7 @@ const onConnect = () => {
         const fps = 1000 / 60;
 
         interval = setInterval(() => {
+            console.log('emitting');
             const { position, velocity, facingRight, animatingFrames, currentSprite, playerNumber } = game.playingState.currentPlayer;
             const { attacking, lastAttackTime, attackData, lastAttackIndex, health } = game.playingState.currentPlayer.combatModule;
             const combatModule = { attacking, lastAttackIndex, health };
