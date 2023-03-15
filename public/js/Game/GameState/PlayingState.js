@@ -60,6 +60,8 @@ class PlayingState extends State {
     }
     exit() {
         super.exit();
+        this.player = null;
+        this.player2 = null;
         hideElementRecursive(playingElement);
     }
     enterPlayingState() {

@@ -11,7 +11,6 @@ const socket = io(url, options);
 const handleP1Click = () => {
     socket.emit('selectPlayer', { playerNumber: PlayerNumber.ONE });
 };
-
 const handleP2Click = () => {
     socket.emit('selectPlayer', { playerNumber: PlayerNumber.TWO });
 };
@@ -64,6 +63,21 @@ const onConnect = () => {
 
     socket.on('leaveGame', () => {
         leaveGame();
+    });
+
+    socket.on('slots', ({ player1, player2 }) => {
+        console.log('slots', player1, player2);
+        if (player1) {
+            p1ButtonElement.removeAttribute('disabled');
+        } else {
+            p1ButtonElement.setAttribute('disabled', true);
+        }
+
+        if (player2) {
+            p2ButtonElement.removeAttribute('disabled');
+        } else {
+            p2ButtonElement.setAttribute('disabled', true);
+        }
     });
 
     socket.on('rooms', ({ roomData }) => {
