@@ -33,6 +33,11 @@ expressApp.use(basename, express.static('public'));
 
 let player1 = null;
 let player2 = null;
+let roomCounter = 1;
+
+const getUserRoom = ({ socket }) => {
+   return [...socket.rooms.values()][1];
+}
 
 const getRoomData = () => {
    let clientIds = [];
@@ -53,14 +58,27 @@ const getRoomData = () => {
 
 io.on('connection', function(socket) {
    console.log('A user connected');
-   socket.join('asdfas');
-   socket.join('asdfas2');
-   socket.join('asdfass3');
 
    socket.emit('rooms', { roomData: getRoomData() });
 
    socket.on('getRooms', () => {
       socket.emit({ roomData: getRoomData() });
+   });
+
+   socket.on('createRoom',  () => {
+      const roomName = 'ROOM' + roomCounter;
+      socket.join(roomCounter);
+      roomCounter++;
+      io.emit('rooms', { roomData: getRoomData() });
+      socket.emit('startGame', { roomName: roomName });
+   });
+
+   socket.on('leaveRoom', () => {
+      const roomName = getUserRoom({ socket });
+      console.log(roomName);
+      socket.leave(roomName);
+      io.emit('rooms', { roomData: getRoomData() });
+      socket.emit('leaveGame');  
    });
 
    socket.on('joinRoom', ({ roomName }) => {
@@ -77,6 +95,7 @@ io.on('connection', function(socket) {
       // }
 
       socket.join(room.name);
+      io.emit('rooms', { roomData: getRoomData() });
       socket.emit('startGame', { roomName: room.name });
    });
 
@@ -85,7 +104,7 @@ io.on('connection', function(socket) {
          console.error('Null client player data in playerData');
          return;
       }
-      
+
       switch (playerNumber) {
          case PlayerNumber.ONE:
             if (player1 == null) {
@@ -110,12 +129,6 @@ io.on('connection', function(socket) {
    })
 
    socket.on('selectPlayer', ({ playerNumber }) => {
-      const newPlayerData = {
-         user: {
-            id: socket.id,
-         }
-      };
-
       if (player1?.user?.id === socket.id || player2?.user?.id === socket.id) {
          socket.emit('failed', { message: 'You are already playing' });
          return;
@@ -127,14 +140,14 @@ io.on('connection', function(socket) {
                socket.emit('failed', { message: 'Player 1 already exists' });
                return;
             }
-            player1 = newPlayerData;
+            player1 = {};
             break;
          case PlayerNumber.TWO:
             if (player2 != null) {
                socket.emit('failed', { message: 'Player 2 already exists' });
                return;
             }
-            player2 = newPlayerData;
+            player2 = {};
             break;
          default:
             throw new Error('Unhandled playerNumber in selectPlayer');

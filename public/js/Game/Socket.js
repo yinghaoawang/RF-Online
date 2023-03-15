@@ -20,7 +20,7 @@ const startGame = ({ roomName }) => {
     game.stateMachine.changeState(game.playingState);
     menuInputsElement.setAttribute('hidden', true);
     roomInputsElement.removeAttribute('hidden');
-    roomTextElement.innerHTML = 'Room ' + roomName;
+    roomTextElement.innerHTML = roomName;
 }
 
 const leaveGame = () => {
@@ -39,8 +39,11 @@ const handleJoinRoomClick = () => {
 }
 
 const handleLeaveRoomClick = () => {
-    socket.emit('leaveRoom', { roomName: selectedRoomName });
-    leaveGame();
+    socket.emit('leaveRoom');
+}
+
+const handleCreateRoomClick = () => {
+    socket.emit('createRoom')
 }
 
 joinRoomButtonElement.addEventListener('click', handleJoinRoomClick);
