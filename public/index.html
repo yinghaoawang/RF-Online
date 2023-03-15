@@ -42,33 +42,33 @@
             </div>
             <canvas id="canvas"></canvas>
         </div>
-        <div hidden id="menuInputs">
+        <div id="menuInputs">
             <button style="margin-right: 25px" id="createRoomButton">Create New Room</button>
-            <select type="dropdown">
-                <option style="width: 200px" value="">Select a Room</option>
-            </select>
+            <select id="roomsDropdown" style="width: 112px" type="dropdown"></select>
             <button disabled id="joinRoomButton">Join Room</button>
         </div>
 
-        <div id="roomInputs">
-            <div style="width: 70px; display: inline-block">Room </div>
+        <div hidden id="roomInputs">
+            <div id="roomText" style="width: 70px; display: inline-block">Room </div>
             <button id="leaveButton">Leave Room</button>
-            <div style="margin-top: 5px" id="playAsButtons">
+            <div id="playAsButtons"
+             style="margin-top: 5px">
                 <button id="joinP1Button">Join as Player 1</button>
                 <button id="joinP2Button">Join as Player 2</button>
             </div>
         </div>
         
-
-        <div id="checkboxes">
+        <!-- TODO add function -->
+        <div hidden id="checkboxes">
             <div><label><input id="gridCheckbox" type="checkbox" /> Show Grid</label></div>
             <div><input id="hurtboxCheckbox" type="checkbox" /><label for="hurtboxCheckbox"> Show Hurtboxes</label></div>
             <div><input id="hitboxCheckbox" type="checkbox" /><label for="hitboxCheckbox"> Show Hitboxes</label></div>
         </div>
-        
+
+        <script src="js/Game/utils.js"></script>
+        <script src="js/Game/UIHandler.js"></script>
         <script src="js/Game/Sprite.js"></script>
         <script src="js/Game/CharacterDatas.js"></script>
-        <script src="js/Game/utils.js"></script>
         <script src="js/Game/InputManager.js"></script>
         <script src="js/Game/GameState/State.js"></script>
         <script src="js/Game/GameState/MenuState.js"></script>

@@ -1,8 +1,3 @@
-let menuDiv = document.getElementById("menuDiv");
-let menuBackgroundElement = document.getElementById("menuBackground");
-let menuBackgroundFilterDiv = document.getElementById("menuBackgroundFilter");
-hideElementRecursive(menuDiv);
-
 class MenuState extends State {
     constructor(game) {
         super();

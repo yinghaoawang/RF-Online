@@ -1,18 +1,3 @@
-let outerContainerDiv = document.getElementById("outerContainerDiv");
-let playingDiv = document.getElementById("playingDiv");
-let p1HealthBarElement = document.getElementById("playerOneHealthBar");
-let p2HealthBarElement = document.getElementById("playerTwoHealthBar");
-hideElementRecursive(playingDiv);
-
-let showAll = false;
-let showGrid = false, showHurtboxes = true, showHitboxes = true;
-let checkboxesDiv = document.getElementById("checkboxes");
-hideElementRecursive(checkboxesDiv);
-
-let timerElement = document.getElementById("timer");
-let winnerTextElement = document.getElementById("winnerText");
-let winnerHelperTextElement = document.getElementById("winnerHelperText");
-
 const PlayerNumber = {
     ONE: 1,
     TWO: 2

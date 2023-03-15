@@ -8,9 +8,6 @@ const options = {
 }
 const socket = io(url, options);
 
-const p1Button = document.getElementById('joinP1Button');
-const p2Button = document.getElementById('joinP2Button');
-
 const handleP1Click = () => {
     socket.emit('selectPlayer', { playerNumber: PlayerNumber.ONE });
 };
@@ -28,6 +25,14 @@ const onConnect = () => {
     console.log('connected');
     isConnected = true;
     if (interval != null) clearInterval(interval);
+
+    socket.on('rooms', ({ roomData }) => {
+            resetRoomSelect();
+    for (const room of roomData) {
+            const { name, user } = room;
+            addRoomToSelect(room);
+        }
+    })
 
     socket.on('failed', (data) => {
         let message = null;
@@ -60,7 +65,6 @@ const onConnect = () => {
             const { attacking, lastAttackTime, attackData, lastAttackIndex, health } = game.playingState.currentPlayer.combatModule;
             const combatModule = { attacking, lastAttackIndex, health };
             const playerData = { position, velocity, facingRight, animatingFrames, currentSprite, combatModule };
-            // console.log(combatModule);
             socket.emit('playerData', { playerNumber, playerData, facingRight });
         }, fps);
     });

@@ -34,8 +34,34 @@ expressApp.use(basename, express.static('public'));
 let player1 = null;
 let player2 = null;
 
+const getRoomData = () => {
+   let clientIds = [];
+   io.sockets.sockets.forEach(socket => {
+      clientIds.push(socket.id);
+   });
+
+   const gameRooms = [];
+   const rooms = io.sockets.adapter.rooms;
+   for (const [key, value] of rooms.entries()) {
+      // exclude default created rooms
+      if (clientIds.includes(key)) continue;
+      gameRooms.push({ name: key, users: [...value] });
+   }
+
+   console.log('game rooms', gameRooms);
+
+   return gameRooms;
+}
+
 io.on('connection', function(socket) {
    console.log('A user connected');
+   socket.join('asdfas');
+   socket.join('asdfas2');
+   socket.join('asdfass3');
+
+   const roomData = getRoomData();
+
+   socket.emit('rooms', { roomData });
 
    socket.on('playerData', ({ playerNumber, playerData }) => {
       if (playerData == null) {
@@ -49,6 +75,7 @@ io.on('connection', function(socket) {
                console.error('Null server player in playerData');
                return;
             }
+
             player1.position = playerData.position;
             break;
          case PlayerNumber.TWO:
