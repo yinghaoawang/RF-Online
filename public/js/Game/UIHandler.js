@@ -59,6 +59,6 @@ const resetRoomSelect = () => {
 resetRoomSelect();
 
 const addRoomToSelect = ({ name, users }) => {
-    const text = `${ name } (${ users.length }/2)`
+    const text = `${ name } (${ users.length } User${ users.length > 1 ? 's' : '' })`
     addOptionToDropdown({ value: name, text, select: roomsDropdownElement })
 }

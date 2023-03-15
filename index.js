@@ -19,8 +19,8 @@ const SOCKET_PORT = 1260;
 const EXPRESS_PORT = 1255;
 
 const io = require('socket.io')(ioServer, {
-    transports: ['websocket'],
- });
+   transports: ['websocket'],
+});
 
 
 const PlayerNumber = {
@@ -31,9 +31,27 @@ const PlayerNumber = {
 const basename = process.env.NODE_ENV == 'production' ? '/' : '/rf-online';
 expressApp.use(basename, express.static('public'));
 
-let player1 = null;
-let player2 = null;
+let roomPlayerData = [];
 let roomCounter = 1;
+
+const getRoomPlayerData = ({ socket }) => {
+   const playerRoomName = getUserRoom({ socket });
+   if (playerRoomName == null) {
+      console.error('Could not find user\'s room in playerData');
+      return { player1: null, player2: null, currentPlayerRoom: null };
+   }
+
+   let currentPlayerRoom = roomPlayerData[playerRoomName];
+   if (currentPlayerRoom == null) {
+      roomPlayerData[playerRoomName] = {
+         player1: null, player2: null
+      };
+      currentPlayerRoom = roomPlayerData[playerRoomName];
+   }
+   let player1 = currentPlayerRoom.player1;
+   let player2 = currentPlayerRoom.player2;
+   return { player1, player2, currentPlayerRoom };
+}
 
 const getUserRoom = ({ socket }) => {
    return [...socket.rooms.values()][1];
@@ -57,9 +75,25 @@ const getRoomData = () => {
 }
 
 io.on('connection', function(socket) {
-   console.log('A user connected');
+   const onConnect = () => {
+      console.log('A user connected');
+      socket.emit('rooms', { roomData: getRoomData() });
+   }
 
-   socket.emit('rooms', { roomData: getRoomData() });
+   onConnect();
+
+   const onJoinRoom = ({ roomName }) => {
+      const roomData = getRoomData();
+      const room = roomData.find(r => r.name === roomName);
+      if (room == null) {
+         socket.emit('failed', { message: 'Room not found' });
+         return;
+      }
+
+      socket.join(room.name);
+      io.emit('rooms', { roomData: getRoomData() });
+      socket.emit('startGame', { roomName: room.name });
+   }
 
    socket.on('getRooms', () => {
       socket.emit({ roomData: getRoomData() });
@@ -67,9 +101,9 @@ io.on('connection', function(socket) {
 
    socket.on('createRoom',  () => {
       const roomName = 'ROOM' + roomCounter;
-      socket.join(roomCounter);
+      socket.join(roomName);
       roomCounter++;
-      io.emit('rooms', { roomData: getRoomData() });
+      onJoinRoom({ roomName });
       socket.emit('startGame', { roomName: roomName });
    });
 
@@ -78,32 +112,19 @@ io.on('connection', function(socket) {
       console.log(roomName);
       socket.leave(roomName);
       io.emit('rooms', { roomData: getRoomData() });
-      socket.emit('leaveGame');  
+      socket.emit('leaveGame');
    });
 
-   socket.on('joinRoom', ({ roomName }) => {
-      const roomData = getRoomData();
-      const room = roomData.find(r => r.name === roomName);
-      if (room == null) {
-         socket.emit('failed', { message: 'Room not found' });
-         return;
-      }
-
-      // if (room.users.length >= 2) {
-      //    socket.emit('failed', { message: 'Room is full' });
-      //    return;
-      // }
-
-      socket.join(room.name);
-      io.emit('rooms', { roomData: getRoomData() });
-      socket.emit('startGame', { roomName: room.name });
-   });
+   socket.on('joinRoom', onJoinRoom);
 
    socket.on('playerData', ({ playerNumber, playerData }) => {
       if (playerData == null) {
          console.error('Null client player data in playerData');
          return;
       }
+
+      const playerRoomName = getUserRoom({ socket });
+      const { player1, player2 } = getRoomPlayerData({ socket });
 
       switch (playerNumber) {
          case PlayerNumber.ONE:
@@ -125,10 +146,12 @@ io.on('connection', function(socket) {
             throw new Error('Unhandled player number in playerData');
       }
 
-      socket.broadcast.emit('playerData', { id: socket.id, playerNumber, playerData });
+      socket.broadcast.to(playerRoomName).emit('playerData', { id: socket.id, playerNumber, playerData });
    })
 
    socket.on('selectPlayer', ({ playerNumber }) => {
+      const { player1, player2, currentPlayerRoom } = getRoomPlayerData({ socket });
+
       if (player1?.user?.id === socket.id || player2?.user?.id === socket.id) {
          socket.emit('failed', { message: 'You are already playing' });
          return;
@@ -140,14 +163,14 @@ io.on('connection', function(socket) {
                socket.emit('failed', { message: 'Player 1 already exists' });
                return;
             }
-            player1 = {};
+            currentPlayerRoom.player1 = {};
             break;
          case PlayerNumber.TWO:
             if (player2 != null) {
                socket.emit('failed', { message: 'Player 2 already exists' });
                return;
             }
-            player2 = {};
+            currentPlayerRoom.player2 = {};
             break;
          default:
             throw new Error('Unhandled playerNumber in selectPlayer');
@@ -157,14 +180,18 @@ io.on('connection', function(socket) {
    })
 
    socket.on('disconnect', function () {
+      const { player1, player2 } = getRoomPlayerData({ socket });
+
       if (player1?.user?.id == socket.id) {
          player1 = null;
-         socket.broadcast.emit('destroyPlayer', ({ playerNumber: PlayerNumber.ONE }))
+         socket.to(playerRoomName).broadcast.emit('destroyPlayer', ({ playerNumber: PlayerNumber.ONE }))
       } else if (player2?.user?.id == socket.id) {
          player2 = null;
-         socket.broadcast.emit('destroyPlayer', ({ playerNumber: PlayerNumber.TWO }))
+         socket.to(playerRoomName).broadcast.emit('destroyPlayer', ({ playerNumber: PlayerNumber.TWO }))
       }
+      
       console.log('A user disconnected');
+      io.emit('rooms', { getRoomData: getRoomData() })
    });
 });
 
