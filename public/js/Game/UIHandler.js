@@ -27,6 +27,7 @@ const roomInputsElement = document.getElementById('roomInputs');
 const roomsDropdownElement = document.getElementById('roomsDropdown');
 const joinRoomButtonElement = document.getElementById('joinRoomButton');
 const leaveRoomButtonElement = document.getElementById('leaveRoomButton');
+const stopPlayingButtonElement = document.getElementById('stopPlayingButton');
 const createRoomButtonElement = document.getElementById('createRoomButton');
 
 let selectedRoomName = null;

@@ -43,9 +43,14 @@ const handleLeaveRoomClick = () => {
 }
 
 const handleCreateRoomClick = () => {
-    socket.emit('createRoom')
+    socket.emit('createRoom');
 }
 
+const handleStopPlayingClick = () => {
+    socket.emit('stopPlaying');
+}
+
+stopPlayingButtonElement.addEventListener('click', handleStopPlayingClick);
 joinRoomButtonElement.addEventListener('click', handleJoinRoomClick);
 leaveRoomButtonElement.addEventListener('click', handleLeaveRoomClick);
 createRoomButtonElement.addEventListener('click', handleCreateRoomClick);
@@ -66,17 +71,24 @@ const onConnect = () => {
     });
 
     socket.on('slots', ({ player1, player2 }) => {
-        console.log('slots', player1, player2);
+        const isPlaying = player1?.userId === socket.id || player2?.userId === socket.id;
+
         if (player1) {
-            p1ButtonElement.removeAttribute('disabled');
-        } else {
             p1ButtonElement.setAttribute('disabled', true);
+        } else {
+            p1ButtonElement.removeAttribute('disabled');
         }
 
         if (player2) {
-            p2ButtonElement.removeAttribute('disabled');
-        } else {
             p2ButtonElement.setAttribute('disabled', true);
+        } else {
+            p2ButtonElement.removeAttribute('disabled');
+        }
+
+        if (isPlaying) {
+            stopPlayingButtonElement.removeAttribute('disabled');
+        } else {
+            stopPlayingButtonElement.setAttribute('disabled', true);
         }
     });
 
@@ -103,7 +115,9 @@ const onConnect = () => {
         }
     });
 
-    socket.on('destroyPlayer', ({ playerNumber }) => {
+    socket.on('destroyPlayer', ({ playerNumber, id }) => {
+        console.log('destroy');
+        if (interval != null && id === socket.id) clearInterval(interval);
         game.playingState.setToDestroyPlayer(playerNumber);
     });
 
