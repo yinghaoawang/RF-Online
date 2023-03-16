@@ -97,11 +97,10 @@ class PlayingState extends State {
         if (this.currentPlayer?.combatModule?.getIsDead()) {
             setTimeout(() => {
                 this.createPlayer(this.currentPlayer.playerNumber, true);
-            }, 1500);
+            }, 2000);
         }
 
-        if (this.player == null || this.player2 == null) return;
-        if (this.player.combatModule.getIsDead() || this.player2.combatModule.getIsDead()) {
+        if (this.player?.combatModule?.getIsDead() || this.player2?.combatModule?.getIsDead()) {
             // this.enterFinishedState();
         } else if (this.timeRemaining <= 0) {
             // this.enterFinishedState();
@@ -269,7 +268,7 @@ class PlayingState extends State {
     }
 
     handlePlayingInput() {
-        if (this.currentPlayer == null) return;
+        if (this.currentPlayer?.combatModule == null || this.currentPlayer?.combatModule.getIsDead()) return;
         let inputManager = this.game.inputManager;
 
         let leftPressed, rightPressed, jumpPressed, attackPressed, attack2Pressed; 
