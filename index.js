@@ -140,8 +140,8 @@ io.on('connection', function(socket) {
       sendSlots();
    }
 
-   const createPlayer = ({ playerNumber }) => {
-      socket.emit('createPlayer', { playerNumber, isCurrentPlayer: true });
+   const createPlayer = ({ playerNumber, characterName }) => {
+      socket.emit('createPlayer', { playerNumber, characterName, isCurrentPlayer: true });
       const player1 = playerNumber === PlayerNumber.ONE ? { userId: socket.id } : null;
       const player2 = playerNumber === PlayerNumber.TWO ? { userId: socket.id } : null;
       sendSlots({ player1, player2 });
@@ -191,7 +191,7 @@ io.on('connection', function(socket) {
 
    socket.on('joinRoom', onJoinRoom);
 
-   socket.on('playerData', ({ playerNumber, playerData }) => {
+   socket.on('playerData', ({ playerNumber, characterName, playerData }) => {
       if (playerData == null) {
          console.error('Null client player data in playerData');
          return;
@@ -220,10 +220,10 @@ io.on('connection', function(socket) {
             throw new Error('Unhandled player number in playerData');
       }
 
-      socket.broadcast.to(playerRoomName).emit('playerData', { id: socket.id, playerNumber, playerData });
+      socket.broadcast.to(playerRoomName).emit('playerData', { id: socket.id, playerNumber, playerData, characterName });
    })
 
-   socket.on('selectPlayer', ({ playerNumber }) => {
+   socket.on('selectPlayer', ({ playerNumber, characterName }) => {
       const { player1, player2, currentPlayerRoom } = getRoomPlayerData({ socket });
 
       if (player1?.userId === socket.id || player2?.userId === socket.id) {
@@ -250,7 +250,7 @@ io.on('connection', function(socket) {
             throw new Error('Unhandled playerNumber in selectPlayer');
       }
 
-      createPlayer({ playerNumber });
+      createPlayer({ playerNumber, characterName });
    })
 
    socket.on('disconnecting', function () {

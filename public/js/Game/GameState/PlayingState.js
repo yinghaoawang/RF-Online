@@ -17,8 +17,9 @@ class PlayingState extends State {
         winnerTextElement.parentElement.style.marginTop = canvas.height / 2 - 40;
     }
 
-    createPlayer(playerNumber, setAsCurrentPlayer) {
-        const player = new Player(this.game, structuredClone(ninjaData));
+    createPlayer({playerNumber, characterName, setAsCurrentPlayer=false}) {
+        console.log(getCharacterDataFromName(characterName), characterName);
+        const player = new Player(this.game, getCharacterDataFromName(characterName));
         player.position.y = 0;
         player.playerNumber = playerNumber;
 
@@ -96,7 +97,7 @@ class PlayingState extends State {
     updateInternalState() {
         if (this.currentPlayer?.combatModule?.getIsDead()) {
             setTimeout(() => {
-                this.createPlayer(this.currentPlayer.playerNumber, true);
+                this.createPlayer(this.currentPlayer.playerNumber, selectedCharacterName || 'Ninja', true);
             }, 2000);
         }
 
@@ -135,17 +136,20 @@ class PlayingState extends State {
             default:
                 throw new Error('Unhandled playerNumber in setToDestroyPlayer');
         }
+        if (this.currentPlayer?.playerNumber == playerNumber) {
+            this.currentPlayer = null;
+        }
     }
 
-    updatePlayer(playerNumber, playerData) {
+    updatePlayer({playerNumber, playerData, characterName}) {
         let player = null;
         switch (playerNumber) {
             case PlayerNumber.ONE:
-                if (this.player == null) this.createPlayer(playerNumber);
+                if (this.player == null) this.createPlayer({playerNumber, characterName});
                 player = this.player;
                 break;
             case PlayerNumber.TWO:
-                if (this.player2 == null) this.createPlayer(playerNumber);
+                if (this.player2 == null) this.createPlayer({playerNumber, characterName});
                 player = this.player2;
                 break;
             default:

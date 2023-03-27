@@ -1,4 +1,6 @@
 const wizardData = {
+    name: 'Wizard',
+    selectImage: './images/wizard/Select.png',
     maxHealth: 100,
     position: {x: canvas.width - 60, y: 0},
     facingRight: false,
@@ -50,6 +52,8 @@ const wizardData = {
 };
 
 const ninjaData = {
+    name: 'Ninja',
+    selectImage: './images/hero/Select.png',
     maxHealth: 100,
     position: {x: 60, y: 0},
     hurtbox: {offset: {x: 0, y: 0}, size: { x: 30, y: 110 }},
@@ -89,3 +93,11 @@ const ninjaData = {
         }
     ]
 };
+
+const characterDatas = [ninjaData, wizardData];
+
+const getCharacterDataFromName = (name) => {
+    const characterData = characterDatas.find(d => d.name === name);
+    console.log(name, characterData, 'klasdjskla');
+    return structuredClone(characterData);
+}

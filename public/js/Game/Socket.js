@@ -9,10 +9,10 @@ const options = {
 const socket = io(url, options);
 
 const handleP1Click = () => {
-    socket.emit('selectPlayer', { playerNumber: PlayerNumber.ONE });
+    socket.emit('selectPlayer', { playerNumber: PlayerNumber.ONE, characterName: selectedCharacterName });
 };
 const handleP2Click = () => {
-    socket.emit('selectPlayer', { playerNumber: PlayerNumber.TWO });
+    socket.emit('selectPlayer', { playerNumber: PlayerNumber.TWO, characterName: selectedCharacterName });
 };
 
 const startGame = ({ roomName }) => {
@@ -109,9 +109,9 @@ const onConnect = () => {
         alert(message);
     });
 
-    socket.on('playerData', ({ playerNumber, playerData, id }) => {
+    socket.on('playerData', ({ playerNumber, characterName, playerData, id }) => {
         if (id !== socket.id) {
-            game.playingState.updatePlayer(playerNumber, playerData);
+            game.playingState.updatePlayer({playerNumber, playerData, characterName});
         }
     });
 
@@ -121,9 +121,9 @@ const onConnect = () => {
         game.playingState.setToDestroyPlayer(playerNumber);
     });
 
-    socket.on('createPlayer', ({ playerNumber, isCurrentPlayer }) => {
+    socket.on('createPlayer', ({ playerNumber, isCurrentPlayer, characterName }) => {
         console.log(playerNumber);
-        game.playingState.createPlayer(playerNumber, isCurrentPlayer);
+        game.playingState.createPlayer({playerNumber, setAsCurrentPlayer: isCurrentPlayer, characterName});
         console.log('create player');
         const fps = 1000 / 60;
 
@@ -133,7 +133,8 @@ const onConnect = () => {
             const { attacking, lastAttackTime, attackData, lastAttackIndex, health } = game.playingState.currentPlayer.combatModule;
             const combatModule = { attacking, lastAttackIndex, health };
             const playerData = { position, velocity, facingRight, animatingFrames, currentSprite, combatModule };
-            socket.emit('playerData', { playerNumber, playerData, facingRight });
+            const characterName = selectedCharacterName;
+            socket.emit('playerData', { playerNumber, playerData, facingRight, characterName });
         }, fps);
     });
 

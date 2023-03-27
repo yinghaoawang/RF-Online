@@ -13,7 +13,7 @@ const p2HealthBarElement = document.getElementById('playerTwoHealthBar');
 hideElementRecursive(playingElement);
 
 const showAll = false;
-const showGrid = false, showHurtboxes = true, showHitboxes = true;
+const showGrid = false, showHurtboxes = false, showHitboxes = false;
 const checkboxesDiv = document.getElementById('checkboxes');
 hideElementRecursive(checkboxesDiv);
 
@@ -32,6 +32,37 @@ const createRoomButtonElement = document.getElementById('createRoomButton');
 
 let selectedRoomName = null;
 const roomTextElement = document.getElementById('roomText');
+
+let selectedCharacterName = 'Ninja';
+
+const selectCharacter = (name) => {
+    if (game.playingState.currentPlayer != null) {
+        alert('Cannot change player while playing.');
+        return;
+    }
+    const prevCharacterButton = document.getElementById('select-' + selectedCharacterName);
+    if (prevCharacterButton) prevCharacterButton.classList.remove('selected');
+    selectedCharacterName = name;
+    const characterButton = document.getElementById('select-' + selectedCharacterName);
+    characterButton.classList.add('selected');
+}
+
+const selectCharacterInputsElement = document.getElementById('selectCharacterInputs');
+for (const characterData of characterDatas) {
+    const { selectImage, name } = characterData;
+    const characterButton = document.createElement('button')
+    characterButton.id = 'select-' + name;
+    characterButton.classList.add('character-button');
+    if (name === 'Ninja') characterButton.classList.add('selected');
+    const img = document.createElement('img');
+    img.src = selectImage || './images/Zebra.png';
+    characterButton.appendChild(img);
+    const label = document.createElement('label');
+    label.innerHTML = name;
+    characterButton.appendChild(label);
+    characterButton.addEventListener('click', () => selectCharacter(name));
+    selectCharacterInputsElement.appendChild(characterButton);
+}
 
 roomsDropdownElement.addEventListener('change', function() {
     if (this.value == '') {

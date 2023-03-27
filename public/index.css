@@ -79,3 +79,23 @@
         opacity: 0;
     }
 }
+
+.character-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: '14px';
+    opacity: .5;
+}
+
+.character-button.selected {
+    opacity: 1;
+}
+
+.character-button > img {
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
