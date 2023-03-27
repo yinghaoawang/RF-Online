@@ -29,6 +29,10 @@
     display: none !important;
 }
 
+[hidden]{
+    display: none !important;
+}
+
 .health-bar-bg, .health-bar {
     width: 100%;
     height: 25px;
@@ -98,4 +102,25 @@
     object-fit: cover;
     margin-top: 5px;
     margin-bottom: 5px;
+}
+
+#createRoomButton {
+    height: 50px;
+}
+
+#roomsContainer {
+    border: 1px solid black;
+    width: 180px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    min-height: 200px;
+}
+
+#roomsContainer > label {
+    text-decoration: underline;
+}
+
+#roomsContainer > button {
+    width: 100%;
 }

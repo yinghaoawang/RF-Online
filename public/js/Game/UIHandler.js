@@ -24,7 +24,6 @@ const winnerHelperTextElement = document.getElementById('winnerHelperText');
 const menuInputsElement = document.getElementById('menuInputs');
 const roomInputsElement = document.getElementById('roomInputs');
 
-const roomsDropdownElement = document.getElementById('roomsDropdown');
 const joinRoomButtonElement = document.getElementById('joinRoomButton');
 const leaveRoomButtonElement = document.getElementById('leaveRoomButton');
 const stopPlayingButtonElement = document.getElementById('stopPlayingButton');
@@ -64,33 +63,31 @@ for (const characterData of characterDatas) {
     selectCharacterInputsElement.appendChild(characterButton);
 }
 
-roomsDropdownElement.addEventListener('change', function() {
-    if (this.value == '') {
-        selectedRoomName = null;
-        joinRoomButtonElement.setAttribute('disabled', true);
-    } else {
-        selectedRoomName = this.value;
-        joinRoomButtonElement.removeAttribute('disabled');
+const addButtonToContainer = ({ container, value, text }, handleJoinRoomClick) => {
+    const button = document.createElement('button');
+    button.value = value;
+    button.innerHTML = text;
+    container.appendChild(button);
+    if (handleJoinRoomClick != null) {
+        button.addEventListener('click', () => {
+            handleJoinRoomClick({ selectedRoomName: value })
+        })
     }
-});
-
-const addOptionToDropdown = ({ select, value, text }) => {
-    const option = document.createElement('option');
-    option.value = value;
-    option.innerHTML = text;
-    select.appendChild(option);
 }
 
+const roomsElement = document.getElementById('roomsContainer');
+
 const resetRoomSelect = () => {
-    for (let i = 0; i < roomsDropdownElement.length; i++) {
-        roomsDropdownElement.remove(i);
-        i--;
+    while (roomsElement.lastElementChild) {
+        roomsElement.removeChild(roomsElement.lastElementChild);
     }
-    addOptionToDropdown({ value: '', text: 'Select a Room', select: roomsDropdownElement });
+    const label = document.createElement('label');
+    label.innerHTML = 'Rooms'
+    roomsElement.appendChild(label);
 }
 resetRoomSelect();
 
-const addRoomToSelect = ({ name, users }) => {
+const addRoomToContainer = ({ name, users }, handleJoinRoomClick) => {
     const text = `${ name } (${ users.length } User${ users.length > 1 ? 's' : '' })`
-    addOptionToDropdown({ value: name, text, select: roomsDropdownElement })
+    addButtonToContainer({ value: name, text, container: roomsElement }, handleJoinRoomClick)
 }

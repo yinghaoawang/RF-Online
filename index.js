@@ -186,7 +186,7 @@ io.on('connection', function(socket) {
       const roomName = getUserRoomName({ socket });
       leaveGame();
       socket.leave(roomName);
-      socket.emit('rooms', { roomData: getRoomData() });
+      io.emit('rooms', { roomData: getRoomData() });
    });
 
    socket.on('joinRoom', onJoinRoom);

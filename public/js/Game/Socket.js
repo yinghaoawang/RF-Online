@@ -18,6 +18,7 @@ const handleP2Click = () => {
 const startGame = ({ roomName }) => {
     game.stateMachine.changeState(game.playingState);
     menuInputsElement.setAttribute('hidden', true);
+
     roomInputsElement.removeAttribute('hidden');
     roomTextElement.innerHTML = roomName;
 }
@@ -34,7 +35,7 @@ const leaveGame = () => {
 p1ButtonElement.addEventListener('click', handleP1Click);
 p2ButtonElement.addEventListener('click', handleP2Click);
 
-const handleJoinRoomClick = () => {
+const handleJoinRoomClick = ({ selectedRoomName }) => {
     socket.emit('joinRoom', { roomName: selectedRoomName });
 }
 
@@ -51,7 +52,6 @@ const handleStopPlayingClick = () => {
 }
 
 stopPlayingButtonElement.addEventListener('click', handleStopPlayingClick);
-joinRoomButtonElement.addEventListener('click', handleJoinRoomClick);
 leaveRoomButtonElement.addEventListener('click', handleLeaveRoomClick);
 createRoomButtonElement.addEventListener('click', handleCreateRoomClick);
 
@@ -93,9 +93,10 @@ const onConnect = () => {
     });
 
     socket.on('rooms', ({ roomData }) => {
+        console.log('rooms', roomData);
         resetRoomSelect();
         for (const room of roomData) {
-            addRoomToSelect(room);
+            addRoomToContainer(room, handleJoinRoomClick);
         }
     });
 
