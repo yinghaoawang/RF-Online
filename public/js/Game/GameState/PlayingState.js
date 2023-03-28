@@ -97,7 +97,7 @@ class PlayingState extends State {
     updateInternalState() {
         if (this.currentPlayer?.combatModule?.getIsDead()) {
             setTimeout(() => {
-                this.createPlayer(this.currentPlayer.playerNumber, selectedCharacterName || 'Ninja', true);
+                this.createPlayer({playerNumber: this.currentPlayer.playerNumber, characterName: selectedCharacterName || 'Ninja', setAsCurrentPlayer: true});
             }, 2000);
         }
 
